@@ -877,7 +877,7 @@ public:
 
     constexpr unexpected(unexpected &&) = default;
 
-    template<typename Err>
+    template<typename Err = E>
     constexpr explicit unexpected(Err &&e) requires (
             std::is_convertible_v<E, Err> &&
             !std::is_same_v<std::remove_cvref_t<Err>, std::in_place_t> &&
@@ -957,28 +957,37 @@ public:
     }
 
     template<typename E1, typename E2>
-    friend constexpr bool operator==(const unexpected<E1> &x, const unexpected<E2> &y) {
-        return x.value_ == y.value_;
-    }
+    friend constexpr bool operator==(const unexpected<E1> &x, const unexpected<E2> &y);
 
     template<typename E1, typename E2>
-    friend constexpr bool operator!=(const unexpected<E1> &x, const unexpected<E2> &y) {
-        return x.value_ != y.value_;
-    }
+    friend constexpr bool operator!=(const unexpected<E1> &x, const unexpected<E2> &y);
 
     template<typename E1>
-    friend void swap(unexpected<E1> &x, unexpected<E1> &y) noexcept(noexcept(x.swap(y))) {
-        x.swap(y);
-    }
+    friend void swap(unexpected<E1> &x, unexpected<E1> &y) noexcept(noexcept(x.swap(y)));
 
 private:
     E value_;
 };
 
+template<typename E1, typename E2>
+constexpr bool operator==(const unexpected<E1> &x, const unexpected<E2> &y) {
+    return x.value_ == y.value_;
+}
+
+template<typename E1, typename E2>
+constexpr bool operator!=(const unexpected<E1> &x, const unexpected<E2> &y) {
+    return x.value_ != y.value_;
+}
+
+template<typename E1>
+void swap(unexpected<E1> &x, unexpected<E1> &y) noexcept(noexcept(x.swap(y))) {
+    x.swap(y);
+}
+
 template<>
 class bad_expected_access<void> : public std::exception {
 public:
-    explicit bad_expected_access();
+    explicit bad_expected_access() {}
 };
 
 template<typename E>
