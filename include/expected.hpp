@@ -740,7 +740,7 @@ public:
         }
     }
 
-    constexpr explicit operator bool() noexcept {
+    constexpr explicit operator bool() const noexcept {
         return has_value_;
     }
 
@@ -749,7 +749,7 @@ public:
     }
 
     constexpr void value() const {
-        if (!*this) throw bad_expected_access(error());
+        if (!has_value_) throw bad_expected_access(error());
     }
 
     constexpr const E &error() const &{
